@@ -72,36 +72,6 @@ h1 em{font-style:normal;color:var(--cinnabar)}
 .board-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 16px 10px;border-bottom:1px solid var(--line);margin-bottom:12px}
 .board-head h2{font-size:13px;letter-spacing:.22em;color:var(--ink-2);margin:0;font-weight:500}
 .board-head span{font-size:11.5px;color:var(--ink-3);letter-spacing:.05em}
-.scroll{overflow-x:auto;padding:0 16px 6px}
-.gens{display:flex;gap:14px;align-items:flex-start;min-height:300px}
-.gen{min-width:132px;flex:1 0 132px}
-.gen-title{font-size:11.5px;color:var(--ink-3);letter-spacing:.14em;border-bottom:1px solid var(--wash);padding-bottom:4px;margin-bottom:9px;text-align:center}
-.cards{display:flex;flex-direction:column;gap:9px}
-
-.card{
-  position:relative;border:1px solid var(--line);background:var(--paper);
-  padding:8px 9px 9px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;
-  text-align:left;width:100%;font:inherit;color:inherit;display:block
-}
-.card:hover{border-color:var(--cinnabar-soft);transform:translateY(-1px)}
-.card.dead{opacity:.5;cursor:default;background:var(--paper-2)}
-.card.head{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--ink)}
-.card.heir{box-shadow:inset 3px 0 0 var(--cinnabar)}
-.card.selectable{border-color:var(--cinnabar);background:#FBF6EC}
-.cname{font-size:15px;letter-spacing:.06em;display:flex;align-items:baseline;gap:5px}
-.cname .role{font-size:10.5px;color:var(--ink-3);letter-spacing:.08em;border:1px solid var(--wash);padding:0 4px}
-.card .age{font-size:11.5px;color:var(--ink-2);margin-top:2px;letter-spacing:.04em}
-.card .five{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
-.dim{display:flex;align-items:center;gap:2px;font-size:10.5px;color:var(--ink-3)}
-.dim s{text-decoration:none;font-size:10.5px;letter-spacing:.05em}
-.dot{width:5px;height:5px;display:inline-block;background:var(--wash)}
-.dot.on{background:var(--ink-2)}
-.dot.on5{background:var(--cinnabar)}
-.card .cause{font-size:10.5px;color:var(--cinnabar-soft);margin-top:5px;letter-spacing:.04em}
-.card .seal{
-  position:absolute;top:7px;right:7px;border:1px solid var(--cinnabar);color:var(--cinnabar);
-  font-size:10px;line-height:1;padding:3px 3px 2px;letter-spacing:.12em;transform:rotate(1.5deg)
-}
 .legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px 0;font-size:11px;color:var(--ink-3);border-top:1px solid var(--wash);margin-top:12px}
 
 /* ---------- 决策 ---------- */
@@ -115,7 +85,6 @@ h1 em{font-style:normal;color:var(--cinnabar)}
 .pcard h3{margin:0 0 3px;font-size:14.5px;letter-spacing:.06em;font-weight:600}
 .pcard p{margin:0;font-size:12px;color:var(--ink-2);line-height:1.55}
 .pcard .eff{margin-top:6px;font-size:11.5px;color:var(--moss);letter-spacing:.03em}
-.pcard .eff .down{color:var(--cinnabar-soft)}
 .family-actions{display:flex;gap:8px;flex-wrap:wrap}
 .act{
   font:inherit;font-size:12.5px;padding:7px 12px;border:1px solid var(--line);background:var(--paper);
@@ -132,6 +101,52 @@ h1 em{font-style:normal;color:var(--cinnabar)}
 .log li{border-bottom:1px dotted var(--wash);padding:3px 0;display:flex;gap:8px}
 .log li b{flex:0 0 46px;font-family:Georgia,serif;font-weight:400;color:var(--ink-3);font-size:11px}
 .log li .red{color:var(--cinnabar)}
+
+/* ---------- 家族树 ---------- */
+.treewrap{overflow:auto;max-height:66vh;padding:14px 16px 18px}
+.tree{position:relative}
+.links{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.links path{fill:none;stroke:#BDB29B;stroke-width:1.1}
+.links path.marry{stroke:#C0645A;stroke-dasharray:4 4;stroke-width:1}
+.node{
+  position:absolute;border:1px solid var(--line);background:var(--paper);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .2s;overflow:visible
+}
+.node:hover{border-color:var(--cinnabar);box-shadow:0 4px 14px rgba(35,32,28,.13);transform:translateY(-2px);z-index:5}
+.node.dead{opacity:.42;background:var(--paper-2);border-style:dashed;cursor:default}
+.node.head{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--ink)}
+.node.heir{box-shadow:inset 3px 0 0 var(--cinnabar)}
+.node.selectable{border-color:var(--cinnabar);background:#FBF6EC}
+.node.spouse{border-style:dotted;background:rgba(255,255,255,.6)}
+.node .nm{font-size:13.5px;letter-spacing:.05em;line-height:1.2;white-space:nowrap}
+.node.dead .nm{color:var(--ink-3)}
+.node .mt{font-size:10px;color:var(--ink-3);letter-spacing:.04em;margin-top:2px}
+.node .seal{
+  position:absolute;top:-7px;right:-7px;border:1px solid var(--cinnabar);color:var(--cinnabar);
+  background:var(--paper);font-size:10px;line-height:1;padding:3px 3px 2px;letter-spacing:.1em;font-style:normal
+}
+
+/* ---------- 悬停数值 ---------- */
+.tip{
+  position:fixed;z-index:30;display:none;pointer-events:none;width:236px;
+  border:1px solid var(--ink);background:rgba(245,241,230,.98);padding:11px 12px 12px;
+  box-shadow:0 10px 30px rgba(35,32,28,.18)
+}
+.tip.on{display:block}
+.tip h4{margin:0;font-size:14px;letter-spacing:.08em;font-weight:600;display:flex;gap:6px;align-items:baseline}
+.tip h4 small{font-size:10.5px;color:var(--ink-3);font-weight:400;letter-spacing:.06em}
+.tip .sub{font-size:10.5px;color:var(--ink-3);margin:3px 0 8px;letter-spacing:.04em}
+.tip .row{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-2);margin:2px 0}
+.tip .row s{text-decoration:none;width:12px;color:var(--ink-3)}
+.tip .row .b{width:34px;font-family:Georgia,serif;font-size:11px;color:var(--ink)}
+.tip .row i{display:inline-block;height:4px;background:var(--wash);flex:1;position:relative}
+.tip .row i b{position:absolute;left:0;top:0;bottom:0;background:var(--ink-2);display:block}
+.tip .row i b.hi{background:var(--cinnabar)}
+.tip hr{border:none;border-top:1px dashed var(--line);margin:8px 0 7px}
+.tip .kv{font-size:10.5px;color:var(--ink-2);display:flex;justify-content:space-between;padding:1px 0}
+.tip .kv em{font-style:normal;color:var(--ink-3)}
+.tip .sup{font-family:Georgia,serif;font-size:13px;color:var(--cinnabar)}
 
 /* ---------- 结局 ---------- */
 .ending{position:fixed;inset:0;background:rgba(35,32,28,.86);display:flex;align-items:center;justify-content:center;padding:22px;z-index:40}
@@ -164,11 +179,11 @@ h1 em{font-style:normal;color:var(--cinnabar)}
     <main class="board">
       <div class="board-head">
         <h2>族谱</h2>
-        <span id="board-hint">按世代分列 · 朱印为储君</span>
+        <span id="board-hint">一族之树 · 悬停看数值</span>
       </div>
-      <div class="scroll"><div class="gens" id="gens"></div></div>
+      <div class="treewrap"><div class="tree" id="gens"></div></div>
       <div class="legend">
-        <span>灰底＝已故</span><span>朱印＝储君</span><span>左墨线＝在位家主</span><span>五维：文武德体貌</span>
+        <span>灰＝已故</span><span>朱印＝储君</span><span>左墨线＝在位家主</span><span>虚线＝姻亲</span><span>悬停看五维与支持度</span>
       </div>
     </main>
 
@@ -193,6 +208,7 @@ h1 em{font-style:normal;color:var(--cinnabar)}
     演示版：单局约 30 回合。数值取自设计文档 v1.2，生育、死亡、财政、支持度均按文档公式实时结算。
   </p>
 </div>
+<div class="tip" id="tip"></div>
 
 <script>
 /* ===================== 状态 ===================== */
@@ -202,7 +218,7 @@ var S = {
   usedHeir:false, usedMarry:false, triggered:null, lastPolicies:[]
 };
 var uid = 1;
-var GIVEN = ['璟','烈','昀','煇','焕','翰','瑞','瑄','珩','瑾','琛','瑨','瑞','珏','瑋'];
+var GIVEN = ['璟','烈','昀','烨','焕','翰','瑞','瑄','珩','瑾','琛','瑨','瑞','珏','璋'];
 
 function rint(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function rnd(a,b){ return Math.random()*(b-a)+a; }
@@ -235,7 +251,7 @@ function newGame(){
   S.usedHeir=false; S.usedMarry=false; S.triggered=null; S.lastPolicies=[];
   uid=1;
 
-  var emp = add({name:'萧承祧', sex:'m', gen:1, role:'帝', age:42, w:{'文':4,'武':3,'德':3,'体':3,'貌':4}, pang:1});
+  var emp = add({name:'萧承祐', sex:'m', gen:1, role:'帝', age:42, w:{'文':4,'武':3,'德':3,'体':3,'貌':4}, pang:1});
   S.headId = emp.id;
 
   var empress = add({name:'王氏', sex:'f', gen:1, role:'后', age:38, w:{'文':3,'武':1,'德':4,'体':3,'貌':4}, pang:1});
@@ -249,12 +265,12 @@ function newGame(){
   add({name:'萧承昀', sex:'m', gen:2, role:'皇子', age:9, w:{'文':4,'武':2,'德':3,'体':2,'貌':2}, pang:0, father:emp.id, mother:fei2.id});
   add({name:'萧承婉', sex:'f', gen:2, role:'公主', age:12, w:{'文':3,'武':1,'德':3,'体':2,'貌':4}, pang:0, father:emp.id, mother:fei1.id});
 
-  var uncle = add({name:'萧承煇', sex:'m', gen:1, role:'皇弟', age:38, w:{'文':3,'武':3,'德':2,'体':2,'貌':2}, pang:1});
+  var uncle = add({name:'萧承烨', sex:'m', gen:1, role:'皇弟', age:38, w:{'文':3,'武':3,'德':2,'体':2,'貌':2}, pang:1});
   var grand = add({name:'萧敬之', sex:'m', gen:1, role:'皇叔', age:62, w:{'文':2,'武':2,'德':4,'体':2,'貌':2}, pang:1});
   add({name:'萧承焕', sex:'m', gen:2, role:'宗室', age:35, w:{'文':4,'武':3,'德':2,'体':3,'貌':3}, pang:1, father:grand.id});
   add({name:'萧承翰', sex:'m', gen:2, role:'宗室', age:30, w:{'文':2,'武':4,'德':2,'体':3,'貌':2}, pang:1, father:grand.id});
 
-  log('元年。大岐承熙元年，新君萧承祧即位，春秋四十有二。','');
+  log('元年。大岐承熙元年，新君萧承祐即位，春秋四十有二。','');
   render();
 }
 
@@ -280,18 +296,18 @@ function support(m){
 
 /* ===================== 国策 ===================== */
 var POLICIES = [
- {id:'gov', name:'整饰吏治', desc:'考课州县，裁汰冗员。士林称快，官场结怨。', eff:'皇权+5 民心+4 国库-40', apply:function(){ S.nat.power+=5; S.nat.hearts+=4; S.nat.coin-=40; }},
- {id:'tax', name:'减赋劝农', desc:'免去三成夏税，让田里先长出粮来。', eff:'民心+6 国库-60', apply:function(){ S.nat.hearts+=6; S.nat.coin-=60; }},
- {id:'arm', name:'修举武备', desc:'补军饷、修边墙，把欠饷的旧账先还上。', eff:'武备+5 国库-80', apply:function(){ S.nat.arms+=5; S.nat.coin-=80; }},
- {id:'sea', name:'开海通商', desc:'市舶司重开，银子进来，清议也跟着进来。', eff:'国库+90 声望-3', apply:function(){ S.nat.coin+=90; S.nat.fame-=3; }},
- {id:'edu', name:'兴文教', desc:'开经筵、修国子监，让下一代有点学问。', eff:'声望+5 国库-50 诸子文+1', apply:function(){ S.nat.fame+=5; S.nat.coin-=50; boost('文',1); }},
- {id:'amnesty', name:'大赦天下', desc:'赦轻罪、蠲旧欠，人心是软的。', eff:'民心+3 皇权-2', apply:function(){ S.nat.hearts+=3; S.nat.power-=2; }},
- {id:'purge', name:'清查宗禄', desc:'按人头重核宗室岁禄，动了自家人的碗。', eff:'国库+60 声望-4', apply:function(){ S.nat.coin+=60; S.nat.fame-=4; }},
+ {id:'gov', name:'整饬吏治', desc:'考课州县，裁汰冗员。士林称快，官场结怨。', eff:'皇权+5 民心+4 国库−40', apply:function(){ S.nat.power+=5; S.nat.hearts+=4; S.nat.coin-=40; }},
+ {id:'tax', name:'减赋劝农', desc:'免去三成夏税，让田里先长出粮来。', eff:'民心+6 国库−60', apply:function(){ S.nat.hearts+=6; S.nat.coin-=60; }},
+ {id:'arm', name:'修举武备', desc:'补军饷、修边墙，把欠饷的旧账先还上。', eff:'武备+5 国库−80', apply:function(){ S.nat.arms+=5; S.nat.coin-=80; }},
+ {id:'sea', name:'开海通商', desc:'市舶司重开，银子进来，清议也跟着进来。', eff:'国库+90 声望−3', apply:function(){ S.nat.coin+=90; S.nat.fame-=3; }},
+ {id:'edu', name:'兴文教', desc:'开经筵、修国子监，让下一代有点学问。', eff:'声望+5 国库−50 诸子文+1', apply:function(){ S.nat.fame+=5; S.nat.coin-=50; boost('文',1); }},
+ {id:'amnesty', name:'大赦天下', desc:'赦轻罪、蠲旧欠，人心是软的。', eff:'民心+3 皇权−2', apply:function(){ S.nat.hearts+=3; S.nat.power-=2; }},
+ {id:'purge', name:'清查宗禄', desc:'按人头重核宗室岁禄，动了自家人的碗。', eff:'国库+60 声望−4', apply:function(){ S.nat.coin+=60; S.nat.fame-=4; }},
  {id:'exam', name:'科举取士', desc:'开科取士，抬一批没有根基的新人。', eff:'皇权+3 声望+4', apply:function(){ S.nat.power+=3; S.nat.fame+=4; }},
- {id:'works', name:'营建宫室', desc:'修一座新殿，让天下看见大岐的体面。', eff:'声望+4 国库-70 民心-2', apply:function(){ S.nat.fame+=4; S.nat.coin-=70; S.nat.hearts-=2; }},
- {id:'marry', name:'宗室联姻', desc:'把一位宗女嫁去藩镇，换几年的安分。', eff:'皇权+4 武备+2 声望-2', apply:function(){ S.nat.power+=4; S.nat.arms+=2; S.nat.fame-=2; }},
- {id:'spy', name:'密察百官', desc:'让皇城司把百官的行止录成册子。', eff:'皇权+6 民心-3 声望-3', apply:function(){ S.nat.power+=6; S.nat.hearts-=3; S.nat.fame-=3; }},
- {id:'relief', name:'赈灾平舜', desc:'开仓放粮，把粮价按回原处。', eff:'民心+5 国库-55 声望+2', apply:function(){ S.nat.hearts+=5; S.nat.coin-=55; S.nat.fame+=2; }}
+ {id:'works', name:'营建宫室', desc:'修一座新殿，让天下看见大岐的体面。', eff:'声望+4 国库−70 民心−2', apply:function(){ S.nat.fame+=4; S.nat.coin-=70; S.nat.hearts-=2; }},
+ {id:'marry', name:'宗室联姻', desc:'把一位宗女嫁去藩镇，换几年的安分。', eff:'皇权+4 武备+2 声望−2', apply:function(){ S.nat.power+=4; S.nat.arms+=2; S.nat.fame-=2; }},
+ {id:'spy', name:'密察百官', desc:'让皇城司把百官的行止录成册子。', eff:'皇权+6 民心−3 声望−3', apply:function(){ S.nat.power+=6; S.nat.hearts-=3; S.nat.fame-=3; }},
+ {id:'relief', name:'赈灾平粜', desc:'开仓放粮，把粮价按回原处。', eff:'民心+5 国库−55 声望+2', apply:function(){ S.nat.hearts+=5; S.nat.coin-=55; S.nat.fame+=2; }}
 ];
 function boost(dim, n){
   var kids = S.members.filter(function(m){ return (m.alive && m.role==='皇子') || (m.alive && m.role==='宗室' && m.age<30); });
@@ -300,14 +316,14 @@ function boost(dim, n){
 
 /* ===================== 事件 ===================== */
 var EVENTS = [
- {t:'外寇犯边', f:function(){ S.nat.arms-=8; S.nat.coin-=50; return '北边告急，武备-8、国库-50。'; }},
- {t:'旱灾', f:function(){ S.nat.hearts-=6; S.nat.coin-=40; return '畿内大旱，民心-6、国库-40。'; }},
- {t:'瘟疫', f:function(){ S.triggered='plague'; S.nat.hearts-=4; return '疫气入城，民心-4，本年病亡翻倍。'; }},
- {t:'宗室请分藩', f:function(){ S.nat.power-=5; S.nat.fame-=2; return '叔祖上疏请分藩，皇权-5、声望-2。'; }},
- {t:'科道言事', f:function(){ S.nat.fame+=3; S.nat.power-=1; return '言官上疏弹劾近臣，声望+3、皇权-1。'; }},
- {t:'边将请饷', f:function(){ S.nat.arms+=3; S.nat.coin-=60; return '边将请饷，武备+3、国库-60。'; }},
- {t:'太后干政', f:function(){ S.nat.power-=6; S.nat.hearts+=2; return '太后垂帘议政，皇权-6、民心+2。'; }},
- {t:'市舶大利', f:function(){ S.nat.coin+=70; S.nat.fame-=2; return '市舶司解来一笔余银，国库+70、声望-2。'; }},
+ {t:'外寇犯边', f:function(){ S.nat.arms-=8; S.nat.coin-=50; return '北边告急，武备−8、国库−50。'; }},
+ {t:'旱灾', f:function(){ S.nat.hearts-=6; S.nat.coin-=40; return '畿内大旱，民心−6、国库−40。'; }},
+ {t:'瘟疫', f:function(){ S.triggered='plague'; S.nat.hearts-=4; return '疫气入城，民心−4，本年病亡翻倍。'; }},
+ {t:'宗室请分藩', f:function(){ S.nat.power-=5; S.nat.fame-=2; return '叔祖上疏请分藩，皇权−5、声望−2。'; }},
+ {t:'科道言事', f:function(){ S.nat.fame+=3; S.nat.power-=1; return '言官上疏弹劾近臣，声望+3、皇权−1。'; }},
+ {t:'边将请饷', f:function(){ S.nat.arms+=3; S.nat.coin-=60; return '边将请饷，武备+3、国库−60。'; }},
+ {t:'太后干政', f:function(){ S.nat.power-=6; S.nat.hearts+=2; return '太后垂帘议政，皇权−6、民心+2。'; }},
+ {t:'市舶大利', f:function(){ S.nat.coin+=70; S.nat.fame-=2; return '市舶司解来一笔余银，国库+70、声望−2。'; }},
  {t:'近支暴卒', f:function(){ var c=S.members.filter(function(m){ return m.alive && m.id!==S.headId && m.age>5 && m.age<60; }); if(!c.length) return '无人可死。'; var t=c[rint(0,c.length-1)]; t.alive=false; t.cause='死于非命'; return t.name+'暴卒于第，死因记为死于非命。'; }},
  {t:'祥瑞', f:function(){ S.nat.fame+=4; S.nat.hearts+=2; return '州府献白鹿，声望+4、民心+2。'; }}
 ];
@@ -453,6 +469,77 @@ function marry(m){
   render();
 }
 
+/* ===================== 树形布局 ===================== */
+var NW = 104, NH = 50, GAPX = 22, ROWH = 100, SPW = 84;
+function buildTree(){
+  var memo = {};
+  function kidsOf(id){
+    var ks = S.members.filter(function(m){ return m.father===id; });
+    ks.sort(function(a,b){ return b.age - a.age; });
+    return ks;
+  }
+  function measure(m){
+    if(memo[m.id]!=null) return memo[m.id];
+    var ks = kidsOf(m.id), w;
+    if(!ks.length) w = NW;
+    else {
+      w = 0;
+      ks.forEach(function(k, idx){ w += measure(k); if(idx) w += GAPX; });
+      if(w < NW) w = NW;
+    }
+    if(m.spouse) w += SPW;
+    memo[m.id] = w;
+    return w;
+  }
+  var roots = S.members.filter(function(m){ return !m.father && m.name.charAt(0)==='萧'; });
+  roots.sort(function(a,b){ return b.age - a.age; });
+  var pos = {}, cursor = 0;
+  function place(m, left, top){
+    var ks = kidsOf(m.id);
+    var unit = measure(m.id);
+    var kidsW = unit - (m.spouse ? SPW : 0);
+    var x = left + (kidsW - NW)/2;
+    pos[m.id] = {x:x, y:top, w:NW, h:NH};
+    if(m.spouse && !pos[m.spouse]){
+      var sx = left + kidsW + 14;
+      pos[m.spouse] = {x:sx, y:top, w:NW*0.8, h:NH, spouse:true};
+    }
+    if(ks.length){
+      var kleft = left;
+      ks.forEach(function(k){
+        if(!pos[k.id]) place(k, kleft, top + ROWH);
+        kleft += measure(k.id) + GAPX;
+      });
+    }
+  }
+  roots.forEach(function(r){
+    if(!pos[r.id]) place(r, cursor, 0);
+    cursor += measure(r.id) + 52;
+  });
+  return pos;
+}
+function showTip(m){
+  var tip = document.getElementById('tip');
+  var dims = ['文','武','德','体','貌'];
+  var rows = dims.map(function(k){
+    var v = m.w[k];
+    return '<div class="row"><s>'+k+'</s><span class="b">'+v+'</span><i><b class="'+(v>=5?'hi':'')+'" style="width:'+(v/5*100)+'%"></b></i></div>';
+  }).join('');
+  var sup = support(m);
+  var spouseName = m.spouse && byId(m.spouse) ? byId(m.spouse).name : '无';
+  var kids = m.children.filter(function(id){ return byId(id); }).map(function(id){ return byId(id).name; });
+  tip.innerHTML = '<h4>'+m.name+'<small>'+m.role+' · 第'+m.gen+'世</small></h4>'+
+    '<div class="sub">'+(m.alive ? m.age+' 岁' : '享年 '+m.age+' 岁 · '+m.cause)+
+    '　'+(m.pang?'嫡':'庶')+'　寿数 '+m.life+'</div>'+
+    rows +
+    '<hr>'+
+    '<div class="kv"><em>派系支持</em><span>'+m.faction+' / 20</span></div>'+
+    '<div class="kv"><em>继承支持度</em><span class="sup">'+sup+'</span></div>'+
+    '<div class="kv"><em>配偶</em><span>'+spouseName+'</span></div>'+
+    '<div class="kv"><em>子女</em><span>'+(kids.length?kids.join('、'):'无')+'</span></div>';
+  tip.classList.add('on');
+}
+
 /* ===================== 渲染 ===================== */
 function log(text, cls){
   S.log.push({y:S.year, text:text, cls:cls||''});
@@ -486,46 +573,43 @@ function render(){
     '<div><span>储君</span><b>'+(S.heirId&&byId(S.heirId)?byId(S.heirId).name:'未立')+'</b></div>'+
     '<div><span>本年岁入</span><b>'+Math.round((600+400*S.nat.hearts/100)*(0.85+0.15*S.nat.power/100))+' 万</b></div>';
 
-  /* 族谱 */
-  var gens = {};
-  S.members.forEach(function(m){ (gens[m.gen] = gens[m.gen]||[]).push(m); });
-  var keys = Object.keys(gens).map(Number).sort(function(a,b){ return a-b; });
-  var html = keys.map(function(g){
-    var list = gens[g].slice().sort(function(a,b){
-      if(a.id===S.headId) return -1;
-      if(b.id===S.headId) return 1;
-      if(a.alive!==b.alive) return a.alive?-1:1;
-      return b.age-a.age;
-    });
-    return '<div class="gen"><div class="gen-title">第 '+g+' 世</div><div class="cards">'+
-      list.map(function(m){
-        var dots='';
-        ['文','武','德','体','貌'].forEach(function(k){
-          var v=m.w[k], ds='';
-          for(var i=1;i<=5;i++){
-            ds += '<span class="dot'+(i<=v?(v>=5?' on5':' on'):'')+'"></span>';
-          }
-          dots += '<span class="dim"><s>'+k+'</s>'+ds+'</span>';
-        });
-        var cls='card'+(m.alive?'':' dead')+(m.id===S.headId?' head':'')+(m.id===S.heirId?' heir':'')+
-          (isSelectable(m)?' selectable':'');
-        var seal = (m.id===S.heirId)?'<span class="seal">储</span>':'';
-        return '<button class="'+cls+'" data-id="'+m.id+'">'+seal+
-          '<div class="cname"><span>'+m.name+'</span><span class="role">'+m.role+'</span></div>'+
-          '<div class="age">'+ (m.alive? m.age+' 岁':'享年 '+m.age+'　'+m.cause) +'</div>'+
-          '<div class="five">'+dots+'</div>'+
-          '</button>';
-      }).join('')+'</div></div>';
-  }).join('');
-  document.getElementById('gens').innerHTML = html;
+  /* 族谱：树形布局 */
+  var pos = buildTree();
+  var wmax = 320, hmax = 200;
+  for(var pid in pos){ var q0 = pos[pid]; if(q0.x + q0.w > wmax) wmax = q0.x + q0.w; if(q0.y + q0.h > hmax) hmax = q0.y + q0.h; }
+  var tree = document.getElementById('gens');
+  tree.style.width = (wmax + 36) + 'px';
+  tree.style.height = (hmax + 24) + 'px';
+  var paths = '', nodes = '';
+  S.members.forEach(function(m){
+    var q = pos[m.id]; if(!q) return;
+    if(m.father && pos[m.father] && !q.spouse){
+      var a = pos[m.father];
+      var x1 = a.x + a.w/2, y1 = a.y + a.h;
+      var x2 = q.x + q.w/2, y2 = q.y;
+      paths += '<path d="M '+x1+' '+y1+' C '+x1+' '+(y1+34)+' '+x2+' '+(y2-30)+' '+x2+' '+y2+'"/>';
+    }
+    if(m.spouse && pos[m.spouse] && !q.spouse){
+      var sp = pos[m.spouse];
+      var lx = Math.min(q.x + q.w, sp.x), rx = Math.max(q.x + q.w, sp.x + sp.w);
+      paths += '<path class="marry" d="M '+lx+' '+(q.y+q.h/2)+' L '+rx+' '+(q.y+q.h/2)+'"/>';
+    }
+    var cls = 'node'+(m.alive?'':' dead')+(m.id===S.headId?' head':'')+(m.id===S.heirId?' heir':'')+
+      (isSelectable(m)?' selectable':'')+(q.spouse?' spouse':'');
+    nodes += '<div class="'+cls+'" data-id="'+m.id+'" style="left:'+q.x+'px;top:'+q.y+'px;width:'+q.w+'px;height:'+q.h+'px">'+
+      (m.id===S.heirId?'<i class="seal">储</i>':'')+
+      '<span class="nm">'+m.name+'</span>'+
+      '<span class="mt">'+(m.alive? m.age+' 岁' : m.age+' 岁卒')+'</span>'+
+      '</div>';
+  });
+  tree.innerHTML = '<svg class="links" width="'+tree.style.width+'" height="'+tree.style.height+'">'+paths+'</svg>' + nodes;
 
   /* 决策卡 */
   if(!S.lastPolicies.length || S.lastPolicies.year!==S.year){
     var pool = POLICIES.slice();
     var picked=[];
     while(picked.length<3){ var i=rint(0,pool.length-1); picked.push(pool.splice(i,1)[0]); }
-    picked.year = S.year;
-    S.lastPolicies = picked;
+    S.lastPolicies = picked; S.lastPolicies.year = S.year;
   }
   document.getElementById('policies').innerHTML = S.lastPolicies.map(function(p,idx){
     return '<button class="pcard" data-p="'+idx+'"><h3>'+p.name+'</h3><p>'+p.desc+'</p>'+
@@ -554,9 +638,34 @@ function isSelectable(m){
   return false;
 }
 
+/* ===================== 悬停 ===================== */
+document.getElementById('gens').addEventListener('mouseover', function(e){
+  var n = e.target.closest('.node');
+  if(!n) return;
+  var m = byId(Number(n.getAttribute('data-id')));
+  if(!m) return;
+  showTip(m);
+  var tip = document.getElementById('tip');
+  var r = n.getBoundingClientRect();
+  var tw = 236, th = tip.offsetHeight || 230;
+  var x = r.right + 12, y = r.top;
+  if(x + tw > window.innerWidth - 8) x = r.left - tw - 12;
+  if(x < 8) x = 8;
+  if(y + th > window.innerHeight - 8) y = window.innerHeight - th - 8;
+  if(y < 8) y = 8;
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+});
+document.getElementById('gens').addEventListener('mouseout', function(e){
+  var n = e.target.closest('.node');
+  if(!n) return;
+  if(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.node')) return;
+  document.getElementById('tip').classList.remove('on');
+});
+
 /* ===================== 交互 ===================== */
 document.getElementById('gens').addEventListener('click', function(e){
-  var el = e.target.closest('.card');
+  var el = e.target.closest('.node');
   if(!el) return;
   var m = byId(Number(el.getAttribute('data-id')));
   if(!m || !isSelectable(m)) return;
@@ -576,6 +685,7 @@ document.getElementById('btn-marry').addEventListener('click', function(){
   if(S.ended||S.usedMarry) return;
   S.mode = (S.mode==='marry')?null:'marry'; render();
 });
+document.querySelector('.treewrap').addEventListener('scroll', function(){ document.getElementById('tip').classList.remove('on'); });
 document.getElementById('restart').addEventListener('click', function(){
   var ov=document.querySelector('.ending'); if(ov) ov.remove();
   newGame();
