@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一脉 · 家国传承录</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F5F1E6'/%3E%3Crect x='12' y='6' width='8' height='20' fill='%23A6342A'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#F5F1E6;
+  --paper-2:#EDE6D6;
+  --ink:#23201C;
+  --ink-2:#5D5548;
+  --ink-3:#8A8272;
+  --wash:#DCD3BF;
+  --cinnabar:#A6342A;
+  --cinnabar-soft:#C0645A;
+  --moss:#5F6F63;
+  --line:#C9BFAA;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Songti SC","Source Han Serif SC","Noto Serif SC","STSong",serif;
+  font-size:15px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(138,130,114,.10), transparent 45%),
+    radial-gradient(circle at 85% 70%, rgba(166,52,42,.05), transparent 40%);
+}
+.wrap{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:18px 16px 40px}
+
+/* ---------- 头 ---------- */
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}
+h1{font-size:30px;letter-spacing:.18em;margin:0;font-weight:600}
+h1 em{font-style:normal;color:var(--cinnabar)}
+.year{font-size:13px;color:var(--ink-2);letter-spacing:.08em}
+.year b{color:var(--ink);font-size:15px}
+.header-note{margin-left:auto;font-size:12px;color:var(--ink-3);letter-spacing:.05em;text-align:right}
+.header-note button{
+  font:inherit;font-size:12px;color:var(--ink-2);background:none;border:1px solid var(--line);
+  padding:5px 12px;border-radius:2px;cursor:pointer;letter-spacing:.06em
+}
+.header-note button:hover{color:var(--cinnabar);border-color:var(--cinnabar-soft)}
+
+/* ---------- 主栅格 ---------- */
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.grid{grid-template-columns:246px 1fr}}
+
+/* ---------- 国势面板 ---------- */
+.panel{border:1px solid var(--line);background:rgba(255,255,255,.42);padding:14px 14px 16px}
+.panel h2{font-size:13px;letter-spacing:.22em;color:var(--ink-2);margin:0 0 12px;font-weight:500}
+.meter{margin-bottom:11px}
+.meter .top{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink-2);margin-bottom:4px}
+.meter .top b{font-family:Georgia,"Times New Roman",serif;font-size:15px;color:var(--ink);font-weight:400}
+.track{height:5px;background:var(--wash);position:relative;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--ink-2);transition:width .5s ease}
+.fill.warn{background:var(--cinnabar)}
+.zero-tip{font-size:11px;color:var(--cinnabar-soft);letter-spacing:.05em;margin-top:3px}
+.stats{border-top:1px dashed var(--line);margin-top:14px;padding-top:12px;font-size:12px;color:var(--ink-2)}
+.stats div{display:flex;justify-content:space-between;padding:2px 0}
+.stats b{font-family:Georgia,serif;color:var(--ink);font-weight:400}
+
+/* ---------- 族谱 ---------- */
+.board{border:1px solid var(--line);background:rgba(255,255,255,.42);padding:14px 0 18px;min-height:420px;overflow:hidden}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;padding:0 16px 10px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.board-head h2{font-size:13px;letter-spacing:.22em;color:var(--ink-2);margin:0;font-weight:500}
+.board-head span{font-size:11.5px;color:var(--ink-3);letter-spacing:.05em}
+.scroll{overflow-x:auto;padding:0 16px 6px}
+.gens{display:flex;gap:14px;align-items:flex-start;min-height:300px}
+.gen{min-width:132px;flex:1 0 132px}
+.gen-title{font-size:11.5px;color:var(--ink-3);letter-spacing:.14em;border-bottom:1px solid var(--wash);padding-bottom:4px;margin-bottom:9px;text-align:center}
+.cards{display:flex;flex-direction:column;gap:9px}
+
+.card{
+  position:relative;border:1px solid var(--line);background:var(--paper);
+  padding:8px 9px 9px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;
+  text-align:left;width:100%;font:inherit;color:inherit;display:block
+}
+.card:hover{border-color:var(--cinnabar-soft);transform:translateY(-1px)}
+.card.dead{opacity:.5;cursor:default;background:var(--paper-2)}
+.card.head{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--ink)}
+.card.heir{box-shadow:inset 3px 0 0 var(--cinnabar)}
+.card.selectable{border-color:var(--cinnabar);background:#FBF6EC}
+.cname{font-size:15px;letter-spacing:.06em;display:flex;align-items:baseline;gap:5px}
+.cname .role{font-size:10.5px;color:var(--ink-3);letter-spacing:.08em;border:1px solid var(--wash);padding:0 4px}
+.card .age{font-size:11.5px;color:var(--ink-2);margin-top:2px;letter-spacing:.04em}
+.card .five{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.dim{display:flex;align-items:center;gap:2px;font-size:10.5px;color:var(--ink-3)}
+.dim s{text-decoration:none;font-size:10.5px;letter-spacing:.05em}
+.dot{width:5px;height:5px;display:inline-block;background:var(--wash)}
+.dot.on{background:var(--ink-2)}
+.dot.on5{background:var(--cinnabar)}
+.card .cause{font-size:10.5px;color:var(--cinnabar-soft);margin-top:5px;letter-spacing:.04em}
+.card .seal{
+  position:absolute;top:7px;right:7px;border:1px solid var(--cinnabar);color:var(--cinnabar);
+  font-size:10px;line-height:1;padding:3px 3px 2px;letter-spacing:.12em;transform:rotate(1.5deg)
+}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px 0;font-size:11px;color:var(--ink-3);border-top:1px solid var(--wash);margin-top:12px}
+
+/* ---------- 决策 ---------- */
+.decide{display:grid;gap:14px}
+.policies{display:grid;gap:9px}
+.pcard{
+  border:1px solid var(--line);background:rgba(255,255,255,.5);padding:11px 13px 12px;
+  text-align:left;font:inherit;cursor:pointer;transition:.18s;width:100%
+}
+.pcard:hover{border-color:var(--ink);background:#FBF6EC}
+.pcard h3{margin:0 0 3px;font-size:14.5px;letter-spacing:.06em;font-weight:600}
+.pcard p{margin:0;font-size:12px;color:var(--ink-2);line-height:1.55}
+.pcard .eff{margin-top:6px;font-size:11.5px;color:var(--moss);letter-spacing:.03em}
+.pcard .eff .down{color:var(--cinnabar-soft)}
+.family-actions{display:flex;gap:8px;flex-wrap:wrap}
+.act{
+  font:inherit;font-size:12.5px;padding:7px 12px;border:1px solid var(--line);background:var(--paper);
+  cursor:pointer;letter-spacing:.06em;color:var(--ink-2);border-radius:2px;min-height:38px
+}
+.act:hover{border-color:var(--cinnabar);color:var(--cinnabar)}
+.act.done{opacity:.45;cursor:default}
+.hint{font-size:11.5px;color:var(--cinnabar);letter-spacing:.04em;min-height:18px;margin:0 0 4px}
+
+/* ---------- 年表 ---------- */
+.log{border:1px solid var(--line);background:rgba(255,255,255,.42);padding:12px 14px;max-height:240px;overflow-y:auto}
+.log h2{font-size:13px;letter-spacing:.22em;color:var(--ink-2);margin:0 0 8px;font-weight:500}
+.log ul{list-style:none;margin:0;padding:0;font-size:12px;line-height:1.7;color:var(--ink-2)}
+.log li{border-bottom:1px dotted var(--wash);padding:3px 0;display:flex;gap:8px}
+.log li b{flex:0 0 46px;font-family:Georgia,serif;font-weight:400;color:var(--ink-3);font-size:11px}
+.log li .red{color:var(--cinnabar)}
+
+/* ---------- 结局 ---------- */
+.ending{position:fixed;inset:0;background:rgba(35,32,28,.86);display:flex;align-items:center;justify-content:center;padding:22px;z-index:40}
+.ending .sheet{background:var(--paper);max-width:540px;width:100%;padding:30px 28px 26px;border:1px solid var(--line);text-align:center}
+.ending h2{margin:0 0 6px;font-size:26px;letter-spacing:.2em;color:var(--cinnabar)}
+.ending .sub{font-size:12px;color:var(--ink-3);letter-spacing:.1em;margin-bottom:16px}
+.ending p{font-size:13.5px;color:var(--ink-2);line-height:1.9;text-align:left;margin:0 0 18px}
+.ending button{font:inherit;font-size:13px;padding:9px 22px;border:1px solid var(--ink);background:none;cursor:pointer;letter-spacing:.14em}
+.ending button:hover{background:var(--ink);color:var(--paper)}
+@media(min-width:1100px){.grid{grid-template-columns:246px 1fr 246px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>一脉 <em>·</em> 家国传承录</h1>
+    <div class="year">大岐 <b id="era">承熙</b> <b id="yr">元年</b>　<button class="act" id="restart" style="padding:3px 10px;font-size:11.5px">重开</button></div>
+    <div class="header-note" id="ticknote">族谱即棋盘：每一年，你只能改一处。</div>
+  </header>
+
+  <div class="grid">
+    <!-- 国势 -->
+    <aside class="panel">
+      <h2>国势</h2>
+      <div id="meters"></div>
+      <div class="stats" id="stats"></div>
+    </aside>
+
+    <!-- 族谱 -->
+    <main class="board">
+      <div class="board-head">
+        <h2>族谱</h2>
+        <span id="board-hint">按世代分列 · 朱印为储君</span>
+      </div>
+      <div class="scroll"><div class="gens" id="gens"></div></div>
+      <div class="legend">
+        <span>灰底＝已故</span><span>朱印＝储君</span><span>左墨线＝在位家主</span><span>五维：文武德体貌</span>
+      </div>
+    </main>
+
+    <!-- 决策 -->
+    <section class="decide">
+      <div class="panel">
+        <h2>本年决策</h2>
+        <p class="hint" id="hint"></p>
+        <div class="policies" id="policies"></div>
+        <div class="family-actions" style="margin-top:12px">
+          <button class="act" id="btn-heir">立储</button>
+          <button class="act" id="btn-marry">赐婚</button>
+        </div>
+      </div>
+      <div class="log">
+        <h2>年表</h2>
+        <ul id="log"></ul>
+      </div>
+    </section>
+  </div>
+  <p style="font-size:11.5px;color:var(--ink-3);margin:14px 2px 0;letter-spacing:.04em">
+    演示版：单局约 30 回合。数值取自设计文档 v1.2，生育、死亡、财政、支持度均按文档公式实时结算。
+  </p>
+</div>
+
+<script>
+/* ===================== 状态 ===================== */
+var S = {
+  year: 1, era: '承熙', nat: {power:45, hearts:55, arms:45, coin:1200, fame:40},
+  members: [], log: [], ended: false, mode: null, heirId: null,
+  usedHeir:false, usedMarry:false, triggered:null, lastPolicies:[]
+};
+var uid = 1;
+var GIVEN = ['璟','烈','昀','煇','焕','翰','瑞','瑄','珩','瑾','琛','瑨','瑞','珏','瑋'];
+
+function rint(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function rnd(a,b){ return Math.random()*(b-a)+a; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function bodyK(b){ return {1:2.0,2:1.4,3:1.0,4:0.6,5:0.35}[clamp(Math.round(b),1,5)] || 1.0; }
+function bodyCoef(b){ return {1:0.5,2:0.7,3:1.0,4:1.15,5:1.3}[clamp(Math.round(b),1,5)] || 1.0; }
+function lifeOf(b){ return Math.round(38 + 4*b + rnd(-6,6)); }
+
+function add(o){
+  var m = {
+    id: uid++, name:o.name, sex:o.sex||'m', gen:o.gen||1, role:o.role||'宗室',
+    age:o.age||0, alive:true, cause:'', w:o.w, pang:o.pang?1:0,
+    father:o.father||null, mother:o.mother||null, spouse:null, children:[],
+    faction:rint(0,12), life:lifeOf(o.w['体']), born:S.year
+  };
+  S.members.push(m);
+  if(m.father){ var f=byId(m.father); if(f) f.children.push(m.id); }
+  if(m.mother){ var mo=byId(m.mother); if(mo) mo.children.push(m.id); }
+  return m;
+}
+function byId(id){ for(var i=0;i<S.members.length;i++){ if(S.members[i].id===id) return S.members[i]; } return null; }
+function head(){ return byId(S.headId); }
+function aliveList(){ return S.members.filter(function(m){ return m.alive; }); }
+function royals(){ return aliveList().filter(function(m){ return m.name.charAt(0)==='萧'; }).length; }
+
+/* ===================== 开局 ===================== */
+function newGame(){
+  S.year=1; S.nat={power:45,hearts:55,arms:45,coin:1200,fame:40};
+  S.members=[]; S.log=[]; S.ended=false; S.mode=null; S.heirId=null;
+  S.usedHeir=false; S.usedMarry=false; S.triggered=null; S.lastPolicies=[];
+  uid=1;
+
+  var emp = add({name:'萧承祧', sex:'m', gen:1, role:'帝', age:42, w:{'文':4,'武':3,'德':3,'体':3,'貌':4}, pang:1});
+  S.headId = emp.id;
+
+  var empress = add({name:'王氏', sex:'f', gen:1, role:'后', age:38, w:{'文':3,'武':1,'德':4,'体':3,'貌':4}, pang:1});
+  emp.spouse = empress.id; empress.spouse = emp.id;
+  var fei1 = add({name:'柳氏', sex:'f', gen:1, role:'妃', age:26, w:{'文':2,'武':1,'德':2,'体':4,'貌':3}});
+  var fei2 = add({name:'沈氏', sex:'f', gen:1, role:'妃', age:31, w:{'文':3,'武':1,'德':2,'体':3,'貌':3}});
+  fei1.spouse = emp.id; fei2.spouse = emp.id;
+
+  add({name:'萧承璟', sex:'m', gen:2, role:'皇子', age:18, w:{'文':2,'武':2,'德':2,'体':2,'貌':2}, pang:1, father:emp.id, mother:empress.id});
+  add({name:'萧承烈', sex:'m', gen:2, role:'皇子', age:15, w:{'文':2,'武':4,'德':2,'体':2,'貌':1}, pang:1, father:emp.id, mother:empress.id});
+  add({name:'萧承昀', sex:'m', gen:2, role:'皇子', age:9, w:{'文':4,'武':2,'德':3,'体':2,'貌':2}, pang:0, father:emp.id, mother:fei2.id});
+  add({name:'萧承婉', sex:'f', gen:2, role:'公主', age:12, w:{'文':3,'武':1,'德':3,'体':2,'貌':4}, pang:0, father:emp.id, mother:fei1.id});
+
+  var uncle = add({name:'萧承煇', sex:'m', gen:1, role:'皇弟', age:38, w:{'文':3,'武':3,'德':2,'体':2,'貌':2}, pang:1});
+  var grand = add({name:'萧敬之', sex:'m', gen:1, role:'皇叔', age:62, w:{'文':2,'武':2,'德':4,'体':2,'貌':2}, pang:1});
+  add({name:'萧承焕', sex:'m', gen:2, role:'宗室', age:35, w:{'文':4,'武':3,'德':2,'体':3,'貌':3}, pang:1, father:grand.id});
+  add({name:'萧承翰', sex:'m', gen:2, role:'宗室', age:30, w:{'文':2,'武':4,'德':2,'体':3,'貌':2}, pang:1, father:grand.id});
+
+  log('元年。大岐承熙元年，新君萧承祧即位，春秋四十有二。','');
+  render();
+}
+
+/* ===================== 支持度 ===================== */
+function eldestSon(fid){
+  var kids = S.members.filter(function(m){ return m.father===fid && m.sex==='m'; });
+  kids.sort(function(a,b){ return b.age-a.age; });
+  return kids.length?kids[0].id:null;
+}
+function support(m){
+  var h = head();
+  var base = 1.6*(1.2*m.w['文'] + m.w['武'] + m.w['德']) + 2*(m.w['貌']-3);
+  var rel;
+  if(h && (m.father===h.id || m.mother===h.id)) rel = 12;
+  else if(h && m.father && h.father && m.father===h.father && m.id!==h.id) rel = 2;
+  else rel = -8;
+  var pang = m.pang?6:0;
+  var elder = (h && m.father===h.id && eldestSon(h.id)===m.id)?5:0;
+  var bonus = (m.id===S.heirId)?18:0;
+  var fame = S.nat.fame<20?-10:0;
+  return Math.round((base+rel+pang+elder+m.faction+bonus+fame)*10)/10;
+}
+
+/* ===================== 国策 ===================== */
+var POLICIES = [
+ {id:'gov', name:'整饰吏治', desc:'考课州县，裁汰冗员。士林称快，官场结怨。', eff:'皇权+5 民心+4 国库-40', apply:function(){ S.nat.power+=5; S.nat.hearts+=4; S.nat.coin-=40; }},
+ {id:'tax', name:'减赋劝农', desc:'免去三成夏税，让田里先长出粮来。', eff:'民心+6 国库-60', apply:function(){ S.nat.hearts+=6; S.nat.coin-=60; }},
+ {id:'arm', name:'修举武备', desc:'补军饷、修边墙，把欠饷的旧账先还上。', eff:'武备+5 国库-80', apply:function(){ S.nat.arms+=5; S.nat.coin-=80; }},
+ {id:'sea', name:'开海通商', desc:'市舶司重开，银子进来，清议也跟着进来。', eff:'国库+90 声望-3', apply:function(){ S.nat.coin+=90; S.nat.fame-=3; }},
+ {id:'edu', name:'兴文教', desc:'开经筵、修国子监，让下一代有点学问。', eff:'声望+5 国库-50 诸子文+1', apply:function(){ S.nat.fame+=5; S.nat.coin-=50; boost('文',1); }},
+ {id:'amnesty', name:'大赦天下', desc:'赦轻罪、蠲旧欠，人心是软的。', eff:'民心+3 皇权-2', apply:function(){ S.nat.hearts+=3; S.nat.power-=2; }},
+ {id:'purge', name:'清查宗禄', desc:'按人头重核宗室岁禄，动了自家人的碗。', eff:'国库+60 声望-4', apply:function(){ S.nat.coin+=60; S.nat.fame-=4; }},
+ {id:'exam', name:'科举取士', desc:'开科取士，抬一批没有根基的新人。', eff:'皇权+3 声望+4', apply:function(){ S.nat.power+=3; S.nat.fame+=4; }},
+ {id:'works', name:'营建宫室', desc:'修一座新殿，让天下看见大岐的体面。', eff:'声望+4 国库-70 民心-2', apply:function(){ S.nat.fame+=4; S.nat.coin-=70; S.nat.hearts-=2; }},
+ {id:'marry', name:'宗室联姻', desc:'把一位宗女嫁去藩镇，换几年的安分。', eff:'皇权+4 武备+2 声望-2', apply:function(){ S.nat.power+=4; S.nat.arms+=2; S.nat.fame-=2; }},
+ {id:'spy', name:'密察百官', desc:'让皇城司把百官的行止录成册子。', eff:'皇权+6 民心-3 声望-3', apply:function(){ S.nat.power+=6; S.nat.hearts-=3; S.nat.fame-=3; }},
+ {id:'relief', name:'赈灾平舜', desc:'开仓放粮，把粮价按回原处。', eff:'民心+5 国库-55 声望+2', apply:function(){ S.nat.hearts+=5; S.nat.coin-=55; S.nat.fame+=2; }}
+];
+function boost(dim, n){
+  var kids = S.members.filter(function(m){ return (m.alive && m.role==='皇子') || (m.alive && m.role==='宗室' && m.age<30); });
+  kids.forEach(function(m){ m.w[dim] = clamp(m.w[dim]+n, 1, 5); });
+}
+
+/* ===================== 事件 ===================== */
+var EVENTS = [
+ {t:'外寇犯边', f:function(){ S.nat.arms-=8; S.nat.coin-=50; return '北边告急，武备-8、国库-50。'; }},
+ {t:'旱灾', f:function(){ S.nat.hearts-=6; S.nat.coin-=40; return '畿内大旱，民心-6、国库-40。'; }},
+ {t:'瘟疫', f:function(){ S.triggered='plague'; S.nat.hearts-=4; return '疫气入城，民心-4，本年病亡翻倍。'; }},
+ {t:'宗室请分藩', f:function(){ S.nat.power-=5; S.nat.fame-=2; return '叔祖上疏请分藩，皇权-5、声望-2。'; }},
+ {t:'科道言事', f:function(){ S.nat.fame+=3; S.nat.power-=1; return '言官上疏弹劾近臣，声望+3、皇权-1。'; }},
+ {t:'边将请饷', f:function(){ S.nat.arms+=3; S.nat.coin-=60; return '边将请饷，武备+3、国库-60。'; }},
+ {t:'太后干政', f:function(){ S.nat.power-=6; S.nat.hearts+=2; return '太后垂帘议政，皇权-6、民心+2。'; }},
+ {t:'市舶大利', f:function(){ S.nat.coin+=70; S.nat.fame-=2; return '市舶司解来一笔余银，国库+70、声望-2。'; }},
+ {t:'近支暴卒', f:function(){ var c=S.members.filter(function(m){ return m.alive && m.id!==S.headId && m.age>5 && m.age<60; }); if(!c.length) return '无人可死。'; var t=c[rint(0,c.length-1)]; t.alive=false; t.cause='死于非命'; return t.name+'暴卒于第，死因记为死于非命。'; }},
+ {t:'祥瑞', f:function(){ S.nat.fame+=4; S.nat.hearts+=2; return '州府献白鹿，声望+4、民心+2。'; }}
+];
+
+/* ===================== 岁末结算 ===================== */
+function resolveYear(p){
+  if(S.ended) return;
+  S.mode=null;
+  S.usedHeir=false; S.usedMarry=false;
+  p.apply();
+  log('行「'+p.name+'」：'+p.eff+'。','');
+
+  if(Math.random()<0.34){
+    var e = EVENTS[rint(0,EVENTS.length-1)];
+    var r = e.f();
+    log('【'+e.t+'】'+r,'red');
+  }
+
+  /* 年龄 */
+  S.members.forEach(function(m){ if(m.alive) m.age+=1; });
+
+  /* 生育 */
+  var born = [];
+  S.members.forEach(function(m){
+    if(!m.alive || m.sex!=='f' || m.age<16 || m.age>45 || !m.spouse) return;
+    var hb = byId(m.spouse); if(!hb || !hb.alive || hb.sex!=='m') return;
+    var kids = m.children.filter(function(id){ return byId(id) && byId(id).alive; }).length;
+    var ac = m.age<31?1.0 : m.age<=35?0.85 : m.age<=40?0.60 : m.age<=45?0.35 : 0.12;
+    var bc = bodyCoef((m.w['体']+hb.w['体'])/2);
+    var pBirth = 0.35*ac*bc*Math.max(0, 1-0.15*kids);
+    if(Math.random()<pBirth){
+      var w={};
+      ['文','武','德','体','貌'].forEach(function(k){
+        var mean=(m.w[k]+hb.w[k])/2;
+        w[k]=clamp(Math.round(3+0.6*(mean-3)+rnd(-1.2,1.2)),1,5);
+      });
+      var total=w['文']+w['武']+w['德']+w['体']+w['貌'];
+      if(total>16){ w['文']=clamp(w['文']-(total-16),1,5); }
+      var nm='萧承'+GIVEN[rint(0,GIVEN.length-1)];
+      if(S.members.some(function(x){ return x.name===nm; })){ nm='萧承'+GIVEN[rint(0,GIVEN.length-1)]; }
+      var child = add({name:nm, sex: rint(0,1)?'m':'f', gen:Math.max(m.gen,hb.gen)+1,
+        role: (m.role==='后'||m.role==='妃') && hb.id===S.headId ? '皇子' : '宗室',
+        age:0, w:w, pang: (m.role==='后')?1:0, father:hb.id, mother:m.id});
+      born.push(child.name);
+    }
+  });
+  if(born.length) log('今年添丁：'+born.join('、')+'。','');
+
+  /* 死亡 */
+  var royalCount = royals();
+  var died=[];
+  S.members.forEach(function(m){
+    if(!m.alive) return;
+    if(m.age<5){
+      if(Math.random()<0.06){ m.alive=false; m.cause='病亡（夭折）'; died.push(m); }
+      return;
+    }
+    var pViol = 0.008*(S.nat.power<30?2:1)*(royalCount>40?1.5:1) + ((m.id===S.heirId || (head() && m.father===head().id))?0.004:0);
+    if(Math.random()<pViol){ m.alive=false; m.cause='死于非命'; died.push(m); return; }
+    var pIll = 0.012*bodyK(m.w['体'])*(m.age>=40?1.5:1)*(m.age>=55?2.5:1);
+    if(S.triggered==='plague') pIll*=2;
+    if(Math.random()<pIll){ m.alive=false; m.cause='病亡'; died.push(m); return; }
+    if(m.age>=m.life){ m.alive=false; m.cause='寿终正寝'; died.push(m); }
+  });
+  S.triggered=null;
+  died.forEach(function(m){
+    log(m.name+'（'+m.age+'岁）'+ (m.cause.indexOf('寿终')===0?'寿终正寝': m.cause.indexOf('非命')>=0?'死于非命':'病亡') +'。', 'red');
+  });
+
+  /* 家主之死与传位 */
+  var h = head();
+  if(h && !h.alive){
+    var cands = aliveList().filter(function(m){ return m.name.charAt(0)==='萧' && m.sex==='m' && m.age>=16; });
+    if(!cands.length){
+      endGame('祚终','宗室已无男丁可继，大岐的国祚止于'+S.year+'年。');
+      return;
+    }
+    var best=null, bs=-999;
+    var heir = (S.heirId && byId(S.heirId) && byId(S.heirId).alive) ? byId(S.heirId) : null;
+    if(heir){ best = heir; bs = support(heir); }
+    else {
+      cands.forEach(function(m){ var sc=support(m); if(sc>bs){ bs=sc; best=m; } });
+    }
+    if(bs<30){
+      endGame('分裂','储位无人可服众（支持度 '+bs+' 分），诸王各拥一军，大岐分裂。');
+      return;
+    }
+    S.headId = best.id; S.heirId=null;
+    S.nat.power = Math.round(S.nat.power*0.55+15);
+    S.nat.hearts -= 5;
+    S.nat.fame = Math.round(S.nat.fame*0.8);
+    if(best.w['文']>=4){ S.nat.power+=5; S.nat.coin+=30; }
+    if(best.w['武']>=4){ S.nat.arms+=4; }
+    if(best.w['德']>=4){ S.nat.hearts+=4; }
+    if(best.w['貌']>=4){ S.nat.fame+=6; }
+    log(best.name+'即位，改元'+S.era+'。皇权'+S.nat.power+'、民心'+S.nat.hearts+'、声望'+S.nat.fame+'。','red');
+  }
+
+  /* 财政 */
+  var inc = (600+400*S.nat.hearts/100)*(0.85+0.15*S.nat.power/100);
+  var interest = S.nat.coin<0 ? 0.05*Math.abs(S.nat.coin) : 0;
+  var exp = 120+2.6*S.nat.arms+150+8*royals()+70+interest;
+  S.nat.coin += Math.round(inc-exp);
+
+  /* 国势自然衰减 */
+  S.nat.power -= 1;
+  if(S.year%3===0) S.nat.arms -= 1;
+
+  /* 结局 */
+  if(S.nat.coin<=-400){ endGame('财竭','国库见底，边饷与宗禄同时断供，大岐以财竭终。'); return; }
+  if(S.nat.arms<=0){ endGame('外寇','武备归零，边墙无人，外寇长驱直入。'); return; }
+  if(S.nat.hearts<=0){ endGame('民变','民心尽失，流民成军，州县不复听调。'); return; }
+  if(S.nat.power<=0){ endGame('废立','皇权归零，权臣议废立，萧氏退居别宫。'); return; }
+  if(royals()===0){ endGame('祚终','最后一位萧氏族人下世，宗室绝嗣。'); return; }
+
+  S.year+=1;
+  if(S.year>=31){ endGame('存续','三十年过去，大岐仍在。族谱还在往下写。'); return; }
+  render();
+}
+
+/* ===================== 家事 ===================== */
+function setHeir(m){
+  S.heirId = m.id;
+  log('立'+m.name+'为储君，支持度 '+support(m)+'。','red');
+  S.usedHeir=true; S.mode=null;
+  render();
+}
+var MATCHES=[
+ {tier:'寒门', min:1, w:{'文':2,'武':1,'德':3,'体':3,'貌':3}, gift:20},
+ {tier:'世家女', min:3, w:{'文':4,'武':2,'德':3,'体':2,'貌':3}, gift:80},
+ {tier:'将门女', min:4, w:{'文':2,'武':4,'德':2,'体':4,'貌':2}, gift:40},
+ {tier:'宗室女', min:5, w:{'文':3,'武':2,'德':3,'体':2,'貌':4}, gift:120}
+];
+function marry(m){
+  var ok = MATCHES.filter(function(x){ return m.w['貌']>=x.min; });
+  var pick = ok[ok.length-1];
+  var surname = pick.tier==='寒门'?'李氏':pick.tier==='世家女'?'崔氏':pick.tier==='将门女'?'裴氏':'萧氏';
+  var sp = add({name:surname, sex:'f', gen:m.gen, role: (m.id===S.headId?'妃':'妻'), age: rint(16,24), w: Object.assign({}, pick.w)});
+  m.spouse=sp.id; sp.spouse=m.id;
+  S.nat.coin += pick.gift;
+  log('为'+m.name+'纳'+pick.tier+'（貌'+sp.w['貌']+'），嫁妆+'+pick.gift+'。','');
+  S.usedMarry=true; S.mode=null;
+  render();
+}
+
+/* ===================== 渲染 ===================== */
+function log(text, cls){
+  S.log.push({y:S.year, text:text, cls:cls||''});
+}
+function fmtYear(y){
+  if(y===1) return '元年';
+  return '第'+y+'年';
+}
+function render(){
+  document.getElementById('yr').textContent = fmtYear(S.year);
+  document.getElementById('era').textContent = S.era;
+
+  /* 国势 */
+  var ms = [
+    ['皇权', S.nat.power, 0, 100],
+    ['民心', S.nat.hearts, 0, 100],
+    ['武备', S.nat.arms, 0, 100],
+    ['国库', S.nat.coin, -400, 2200],
+    ['声望', S.nat.fame, 0, 100]
+  ];
+  document.getElementById('meters').innerHTML = ms.map(function(a){
+    var pct = clamp((a[1]-a[2])/(a[3]-a[2])*100, 0, 100);
+    var warn = (a[0]==='皇权'||a[0]==='民心'||a[0]==='武备') ? a[1]<=20 : (a[0]==='国库'? a[1]<=0 : false);
+    return '<div class="meter"><div class="top"><span>'+a[0]+'</span><b>'+Math.round(a[1])+'</b></div>'+
+      '<div class="track"><div class="fill'+(warn?' warn':'')+'" style="width:'+pct+'%"></div></div>'+
+      (a[0]==='国库' && a[1]<0?'<div class="zero-tip">负数起息，年息 5%</div>':'')+'</div>';
+  }).join('');
+  document.getElementById('stats').innerHTML =
+    '<div><span>宗室在册</span><b>'+royals()+'</b></div>'+
+    '<div><span>在位家主</span><b>'+(head()?head().name:'—')+'</b></div>'+
+    '<div><span>储君</span><b>'+(S.heirId&&byId(S.heirId)?byId(S.heirId).name:'未立')+'</b></div>'+
+    '<div><span>本年岁入</span><b>'+Math.round((600+400*S.nat.hearts/100)*(0.85+0.15*S.nat.power/100))+' 万</b></div>';
+
+  /* 族谱 */
+  var gens = {};
+  S.members.forEach(function(m){ (gens[m.gen] = gens[m.gen]||[]).push(m); });
+  var keys = Object.keys(gens).map(Number).sort(function(a,b){ return a-b; });
+  var html = keys.map(function(g){
+    var list = gens[g].slice().sort(function(a,b){
+      if(a.id===S.headId) return -1;
+      if(b.id===S.headId) return 1;
+      if(a.alive!==b.alive) return a.alive?-1:1;
+      return b.age-a.age;
+    });
+    return '<div class="gen"><div class="gen-title">第 '+g+' 世</div><div class="cards">'+
+      list.map(function(m){
+        var dots='';
+        ['文','武','德','体','貌'].forEach(function(k){
+          var v=m.w[k], ds='';
+          for(var i=1;i<=5;i++){
+            ds += '<span class="dot'+(i<=v?(v>=5?' on5':' on'):'')+'"></span>';
+          }
+          dots += '<span class="dim"><s>'+k+'</s>'+ds+'</span>';
+        });
+        var cls='card'+(m.alive?'':' dead')+(m.id===S.headId?' head':'')+(m.id===S.heirId?' heir':'')+
+          (isSelectable(m)?' selectable':'');
+        var seal = (m.id===S.heirId)?'<span class="seal">储</span>':'';
+        return '<button class="'+cls+'" data-id="'+m.id+'">'+seal+
+          '<div class="cname"><span>'+m.name+'</span><span class="role">'+m.role+'</span></div>'+
+          '<div class="age">'+ (m.alive? m.age+' 岁':'享年 '+m.age+'　'+m.cause) +'</div>'+
+          '<div class="five">'+dots+'</div>'+
+          '</button>';
+      }).join('')+'</div></div>';
+  }).join('');
+  document.getElementById('gens').innerHTML = html;
+
+  /* 决策卡 */
+  if(!S.lastPolicies.length || S.lastPolicies.year!==S.year){
+    var pool = POLICIES.slice();
+    var picked=[];
+    while(picked.length<3){ var i=rint(0,pool.length-1); picked.push(pool.splice(i,1)[0]); }
+    picked.year = S.year;
+    S.lastPolicies = picked;
+  }
+  document.getElementById('policies').innerHTML = S.lastPolicies.map(function(p,idx){
+    return '<button class="pcard" data-p="'+idx+'"><h3>'+p.name+'</h3><p>'+p.desc+'</p>'+
+      '<div class="eff">'+p.eff+'</div></button>';
+  }).join('');
+
+  /* 家事按钮 */
+  var bh=document.getElementById('btn-heir'), bm=document.getElementById('btn-marry');
+  bh.className='act'+(S.usedHeir?' done':''); bm.className='act'+(S.usedMarry?' done':'');
+  var hint='';
+  if(S.mode==='heir') hint='在族谱中点选一位十六岁以上的萧氏族人，立为储君。';
+  else if(S.mode==='marry') hint='点选一位未婚的成年族人，按貌定婚配档次。';
+  else hint='本年只能下一道国策，另可立储或赐婚各一次。';
+  document.getElementById('hint').textContent=hint;
+
+  /* 年表 */
+  document.getElementById('log').innerHTML = S.log.slice(-40).map(function(l){
+    return '<li><b>'+fmtYear(l.y)+'</b><span class="'+l.cls+'">'+l.text+'</span></li>';
+  }).join('');
+}
+
+function isSelectable(m){
+  if(!m.alive) return false;
+  if(S.mode==='heir') return m.name.charAt(0)==='萧' && m.sex==='m' && m.age>=16 && m.id!==S.headId;
+  if(S.mode==='marry') return !m.spouse && m.age>=16 && m.id!==S.headId && m.sex==='m';
+  return false;
+}
+
+/* ===================== 交互 ===================== */
+document.getElementById('gens').addEventListener('click', function(e){
+  var el = e.target.closest('.card');
+  if(!el) return;
+  var m = byId(Number(el.getAttribute('data-id')));
+  if(!m || !isSelectable(m)) return;
+  if(S.mode==='heir') setHeir(m);
+  else if(S.mode==='marry') marry(m);
+});
+document.getElementById('policies').addEventListener('click', function(e){
+  var el = e.target.closest('.pcard'); if(!el || S.ended) return;
+  var p = S.lastPolicies[Number(el.getAttribute('data-p'))];
+  resolveYear(p);
+});
+document.getElementById('btn-heir').addEventListener('click', function(){
+  if(S.ended||S.usedHeir) return;
+  S.mode = (S.mode==='heir')?null:'heir'; render();
+});
+document.getElementById('btn-marry').addEventListener('click', function(){
+  if(S.ended||S.usedMarry) return;
+  S.mode = (S.mode==='marry')?null:'marry'; render();
+});
+document.getElementById('restart').addEventListener('click', function(){
+  var ov=document.querySelector('.ending'); if(ov) ov.remove();
+  newGame();
+});
+
+/* ===================== 结局 ===================== */
+var ENDINGS = {
+  '废立':{seed:'皇权归零', text:'权臣入宫，议废立之事。萧氏退居别宫，族谱仍在，只是不再由自己写。'},
+  '民变':{seed:'民心归零', text:'流民成军，州县不再听调。宫城破时，玉玺还在案上。'},
+  '外寇':{seed:'武备归零', text:'边墙无人，外寇长驱。宗室或死或俘，谱牒散于火中。'},
+  '财竭':{seed:'国库见底', text:'边饷与宗禄同时断供，藩镇自立，朝廷只剩一道空诏。'},
+  '祚终':{seed:'宗室绝嗣', text:'最后一位萧氏下世，无人承祀。大岐的国祚，止于这一页。'},
+  '分裂':{seed:'继承危机', text:'诸王各拥一军，择强者而不能服众。大岐裂为数国，同姓相攻。'},
+  '存续':{seed:'三十年', text:'三十年过去，大岐仍在。国势不算好，但族谱还在往下写——这就是这一局的意义。'}
+};
+function endGame(kind, msg){
+  S.ended = true;
+  var safe = ENDINGS[kind] || ENDINGS['存续'];
+  var h = head();
+  var div = document.createElement('div');
+  div.className='ending';
+  div.innerHTML = '<div class="sheet"><div class="sub">大岐 · 承熙 '+fmtYear(S.year)+'</div>'+
+    '<h2>'+kind+'</h2><p>'+msg+'</p>'+
+    '<p style="color:var(--ink-3);font-size:12.5px">在位家主：'+(h?h.name+'（'+h.age+'岁）':'无')+
+    '　宗室在册：'+royals()+'　结局判定：'+safe.seed+'</p>'+
+    '<button id="again">再开一局</button></div>';
+  document.body.appendChild(div);
+  document.getElementById('again').addEventListener('click', function(){ div.remove(); newGame(); });
+  render();
+}
+
+newGame();
+</script>
+</body>
+</html>
